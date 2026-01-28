@@ -1,30 +1,20 @@
-# Text-to-Speech HTML Frontend
+# Text-to-Speech Frontend
 
-Pure HTML/CSS/JavaScript frontend for [Deepgram's Text-to-Speech API](https://developers.deepgram.com/docs/text-to-speech).
+> **⚠️ This is a frontend submodule - do not use directly**
 
-## Features
+This repository contains the shared frontend for Deepgram text-to-speech starter applications. It is designed to be used as a git submodule within backend starter projects.
 
-- 🎙️ Text-to-speech with audio playback
-- 📝 Interactive text input
-- 🎛️ Configurable voice models
-- 🎨 Built with [Deepgram Design System](https://github.com/deepgram/design-system)
-- 🚀 No framework dependencies - pure vanilla JavaScript
+## Usage
 
-## Prerequisites
+To use this frontend with a complete working application, see:
 
-- Node.js 14.0.0+
-- pnpm 10.0.0+
-- A backend server that implements the Text-to-Speech API endpoint
+**Node.js Starter:**
+- [node-text-to-speech](https://github.com/deepgram-starters/node-text-to-speech)
 
-## Quickstart
+**Other Languages:**
 
-```bash
-pnpm install
-pnpm dev
-```
+Browse all available starters at [github.com/deepgram-starters](https://github.com/deepgram-starters)
 
-See the [Node.js Text-to-Speech starter](https://github.com/deepgram-starters/node-text-to-speech) for complete backend implementation.
+## About
 
-## License
-
-MIT - See [LICENSE](./LICENSE)
+This frontend is automatically integrated as a submodule in the backend starters listed above. Running this repository standalone will not work as it requires backend API endpoints to function properly.

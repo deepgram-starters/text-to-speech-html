@@ -30,6 +30,12 @@
 const API_ENDPOINT = "/tts/synthesize";
 
 /**
+ * API endpoint for app metadata
+ * Returns app title, description, author, repository, etc.
+ */
+const METADATA_ENDPOINT = "/api/metadata";
+
+/**
  * LocalStorage key for history persistence
  * Change this if you want to use a different storage key for text-to-speech
  */
@@ -375,6 +381,54 @@ function updateFormValidation() {
 }
 
 // ============================================================================
+// METADATA FETCHING
+// ============================================================================
+
+/**
+ * Fetches app metadata from the backend and updates the UI
+ * Updates page title, description, header title, and repository link
+ */
+async function fetchMetadata() {
+  try {
+    const response = await fetch(METADATA_ENDPOINT);
+    if (!response.ok) {
+      console.warn('Failed to fetch metadata, using defaults');
+      return;
+    }
+
+    const metadata = await response.json();
+
+    // Update page title
+    const pageTitle = document.getElementById('pageTitle');
+    if (metadata.title && pageTitle) {
+      pageTitle.textContent = metadata.title;
+    }
+
+    // Update page description
+    const pageDescription = document.getElementById('pageDescription');
+    if (metadata.description && pageDescription) {
+      pageDescription.setAttribute('content', metadata.description);
+    }
+
+    // Update header title
+    const headerTitle = document.getElementById('headerTitle');
+    if (metadata.title && headerTitle) {
+      headerTitle.textContent = metadata.title;
+    }
+
+    // Update repository link
+    const repoLink = document.getElementById('repoLink');
+    if (metadata.repository && repoLink) {
+      repoLink.href = metadata.repository;
+    }
+
+    console.log('Metadata loaded:', metadata);
+  } catch (error) {
+    console.warn('Error loading metadata, using defaults:', error);
+  }
+}
+
+// ============================================================================
 // INITIALIZATION & SETUP
 // ============================================================================
 
@@ -416,6 +470,8 @@ function init() {
   renderHistory();
   // Check URL for request_id
   checkUrlForRequestId();
+  // Fetch and display app metadata
+  fetchMetadata();
 }
 
 /**

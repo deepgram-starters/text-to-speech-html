@@ -27,7 +27,7 @@
  * API endpoint for text-to-speech requests
  * Contract-compliant endpoint per starter-contracts specification
  */
-const API_ENDPOINT = "/tts/synthesize";
+const API_ENDPOINT = "/api/text-to-speech";
 
 /**
  * API endpoint for app metadata

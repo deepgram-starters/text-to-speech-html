@@ -49,6 +49,60 @@ const API_ENDPOINT = getBasePath() + "api/text-to-speech";
 const METADATA_ENDPOINT = getBasePath() + "api/metadata";
 
 /**
+ * API endpoint for session token
+ */
+const SESSION_ENDPOINT = getBasePath() + "api/session";
+
+/**
+ * Cached session token (JWT)
+ */
+let sessionToken = null;
+
+/**
+ * Reads the session nonce injected by the backend into a meta tag.
+ * Returns null in dev mode (no nonce injected).
+ * @returns {string|null}
+ */
+function getPageNonce() {
+  const meta = document.querySelector('meta[name="session-nonce"]');
+  return meta ? meta.content : null;
+}
+
+/**
+ * Fetches a session token from the backend. Uses the page nonce if available.
+ * Caches the token for subsequent requests.
+ * @returns {Promise<string>} JWT token
+ */
+async function getSessionToken() {
+  if (sessionToken) return sessionToken;
+  const nonce = getPageNonce();
+  const headers = nonce ? { "X-Session-Nonce": nonce } : {};
+  const response = await fetch(SESSION_ENDPOINT, { headers });
+  if (!response.ok) throw new Error(`Session failed: ${response.status}`);
+  const data = await response.json();
+  sessionToken = data.token;
+  return sessionToken;
+}
+
+/**
+ * Wraps fetch with Authorization header. Shows session-expired message on 401.
+ * @param {string} url - The URL to fetch
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Response>}
+ */
+async function authenticatedFetch(url, options = {}) {
+  const token = await getSessionToken();
+  const headers = { ...options.headers, Authorization: `Bearer ${token}` };
+  const response = await fetch(url, { ...options, headers });
+  if (response.status === 401) {
+    sessionToken = null;
+    showError("Session expired, please refresh the page.");
+    throw new Error("Session expired");
+  }
+  return response;
+}
+
+/**
  * LocalStorage key for history persistence
  * Change this if you want to use a different storage key for text-to-speech
  */
@@ -551,8 +605,8 @@ async function handleGenerate() {
       url.searchParams.set("model", model);
     }
 
-    // Make API request with JSON body
-    const response = await fetch(url.toString(), {
+    // Make authenticated API request with JSON body
+    const response = await authenticatedFetch(url.toString(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -24,16 +24,29 @@
 // ============================================================================
 
 /**
- * API endpoint for text-to-speech requests
- * Contract-compliant endpoint per starter-contracts specification
+ * Computes the base path from the current page URL.
+ * Ensures a trailing slash so relative API paths resolve correctly
+ * whether the app is deployed at root (/) or under a subpath.
+ *
+ * @returns {string} Base path with trailing slash (e.g., "/" or "/node-text-to-speech/")
  */
-const API_ENDPOINT = "/api/text-to-speech";
+function getBasePath() {
+  let path = window.location.pathname;
+  if (!path.endsWith("/")) path += "/";
+  return path;
+}
+
+/**
+ * API endpoint for text-to-speech requests
+ * Dynamically resolved from base path to support subpath deployments
+ */
+const API_ENDPOINT = getBasePath() + "api/text-to-speech";
 
 /**
  * API endpoint for app metadata
  * Returns app title, description, author, repository, etc.
  */
-const METADATA_ENDPOINT = "/api/metadata";
+const METADATA_ENDPOINT = getBasePath() + "api/metadata";
 
 /**
  * LocalStorage key for history persistence
